@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jogo da Memória - Vanilla</title>
+    
+</head>
+<body>
+    <h1>Jogo da Memória</h1>
+    <div id="table">
+        
+    </div>
+</body>
+<style>
+    * {
+        margin: 0;
+        padding: 0;            
+    }
+
+    #table {
+        background: #EEEEEE;
+        width: 100vw;
+    }
+
+    #table > .memory_card{
+        color: white;
+        width: calc((100vw - 12vw)/6);
+        height: calc((100vw - 12vw)/6);
+        margin: 1vw;
+        display: inline-flex;
+        cursor: grabbing;
+        border-radius: 5%;
+        position: relative;
+    }
+
+    #table > .memory_card > .memory_card_face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #243755;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        backface-visibility: hidden;
+        transition: transform .6s linear;
+    }
+
+    #table > .memory_card > .memory_card_face > i {
+        font-size: 3em;
+    }
+
+    #table > .memory_card > .memory_card_face.front {
+        transform: perspective(600px) rotateY(0deg);
+        box-shadow: 3px 3px 3px black;
+    }
+
+    #table > .memory_card > .memory_card_face.back {
+        transform: perspective(600px) rotateY(180deg);
+        box-shadow: 3px 3px 3px black;
+    }
+
+    #table > .memory_card:hover > .memory_card_face.front {
+        transform: perspective(600px) rotateY(-180deg);
+    }
+
+    #table > .memory_card:hover > .memory_card_face.back {
+        transform: perspective(600px) rotateY(0deg);
+    }
+
+
+    #table > .memory_card > .memory_card_face.front > i {
+        text-shadow: 0 0 5px pink,
+                     0 0 25px pink,
+                     0 0 50px pink,
+                     0 0 100px pink;
+    }
+
+    #table > .memory_card > .memory_card_face.back > i {
+        text-shadow: 0 0 5px aqua,
+                     0 0 25px aqua,
+                     0 0 50px aqua,
+                     0 0 100px aqua;
+    }
+
+</style>
+<script src="https://kit.fontawesome.com/6112cbb50d.js" crossorigin="anonymous"></script>
+<script>
+    var deck = [];
+    const table = document.querySelector("#table");  
+    const figure_copies = 2;
+    const deck_figures = [
+        '<i class="fas fa-chess-king"></i>',
+        '<i class="fas fa-chess-queen"></i>',
+        '<i class="fas fa-chess-bishop"></i>',
+        '<i class="fas fa-chess-knight"></i>',
+        '<i class="fas fa-chess-rook"></i>',
+        '<i class="fas fa-chess-pawn"></i>',
+        '<i class="fas fa-dice-one"></i>',
+        '<i class="fas fa-dice-two"></i>',
+        '<i class="fas fa-dice-three"></i>',
+        '<i class="fas fa-dice-four"></i>',
+        '<i class="fas fa-dice-five"></i>',
+        '<i class="fas fa-dice-six"></i>',
+    ];
+    const deck_size = figure_copies * deck_figures.length;
+
+    mountDeck(deck_figures, figure_copies);
+
+    function insertNewCard(card)
+    {
+        let position = Math.floor(Math.random() * deck_size);
+        if(typeof deck[position] === 'undefined') {
+            deck[position] = card;
+            return deck[position];
+        }
+        else{
+            return insertNewCard(card);            
+        }
+    }
+
+    function mountDeck(figures = [], copies = 0)
+    {
+        figures.forEach(figure => {
+            let card = document.createElement("div");
+            let card_front = document.createElement("div");
+            let card_back = document.createElement("div");
+            card.setAttribute("class", "memory_card");
+            card_front.setAttribute("class", "memory_card_face front");
+            card_back.setAttribute("class", "memory_card_face back");
+            card_front.innerHTML = '<i class="fas fa-pizza-slice"></i>';
+            card_back.innerHTML = figure;
+            card.appendChild(card_front);
+            card.appendChild(card_back);
+            for (let index = 0; index < copies; index++) {
+                insertNewCard(card.cloneNode(true));
+            }
+        });
+    }
+
+    deck.forEach(memory_card => {
+        table.appendChild(memory_card);
+    });
+</script>
+</html>
